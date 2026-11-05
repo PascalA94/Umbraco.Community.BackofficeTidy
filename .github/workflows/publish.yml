@@ -89,6 +89,8 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+    # A required reviewer approves each publish; the environment only accepts release/* tags (see .github/REPO-SETUP.md).
+    environment: nuget
     permissions:
       contents: read
       id-token: write # NuGet Trusted Publishing (OIDC): no long-lived API key
