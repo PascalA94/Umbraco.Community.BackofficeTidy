@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Umbraco.Community.BackofficeTidy/Umbraco.Community.BackofficeTidy.csproj" />
+  <Project Path="Umbraco.Community.BackofficeTidy.Tests/Umbraco.Community.BackofficeTidy.Tests.csproj" />
+  <Project Path="Umbraco.Community.BackofficeTidy.IntegrationTests/Umbraco.Community.BackofficeTidy.IntegrationTests.csproj" />
+  <Project Path="../demo/Umbraco.Community.BackofficeTidy.DemoSite/Umbraco.Community.BackofficeTidy.DemoSite.csproj" />
+</Solution>

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Title": "Backoffice Tidy",
+  "Description": "Hide Umbraco backoffice extensions by alias, per environment and user group, from appsettings.",
+  "Category": "Editor Tools",
+  "PackageType": "Package",
+  "LicenseTypes": [
+    "Free"
+  ],
+  "DocumentationUrl": "https://github.com/PascalA94/Umbraco.Community.BackofficeTidy#readme",
+  "IssueTrackerUrl": "https://github.com/PascalA94/Umbraco.Community.BackofficeTidy/issues",
+  "LookingForContributors": true,
+  "AuthorDetails": {
+    "Name": "Pascal Meyer",
+    "Url": "https://github.com/PascalA94",
+    "ImageUrl": "https://github.com/PascalA94.png"
+  },
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-rules-not-applied.png",
+      "Caption": "The Welcome dashboard tab and the search header app, before any rule applies."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-02-writer-rules-applied.png",
+      "Caption": "A writer with the rules applied: no Welcome tab and no search header app."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-03-editor-search-kept.png",
+      "Caption": "An editor with the same rules: the search header app is kept, because that rule is only for writers."
+    }
+  ],
+  "Tags": [
+    "backoffice",
+    "dashboard",
+    "copilot",
+    "ai",
+    "user-groups",
+    "tidy"
+  ]
+}
