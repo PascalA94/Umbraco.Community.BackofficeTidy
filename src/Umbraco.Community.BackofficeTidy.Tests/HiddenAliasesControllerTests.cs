@@ -28,7 +28,7 @@ public class HiddenAliasesControllerTests
         return group;
     }
 
-    private static HiddenAliasesController Create(string[]? groups, string environment = "Development", HideRule[]? rules = null)
+    private static HiddenAliasesController Create(string[]? groups, string environment = "Development", HideRule[]? rules = null, bool warnUnknownAliases = true)
     {
         var security = Substitute.For<IBackOfficeSecurityAccessor>();
         var backOffice = Substitute.For<IBackOfficeSecurity>();
@@ -45,7 +45,7 @@ public class HiddenAliasesControllerTests
         var env = Substitute.For<IHostEnvironment>();
         env.EnvironmentName.Returns(environment);
         var options = Substitute.For<IOptionsMonitor<BackofficeTidyOptions>>();
-        options.CurrentValue.Returns(new BackofficeTidyOptions { Hide = rules ?? Rules });
+        options.CurrentValue.Returns(new BackofficeTidyOptions { Hide = rules ?? Rules, WarnUnknownAliases = warnUnknownAliases });
 
         return new HiddenAliasesController(security, options, new HiddenAliasResolver(), env)
         {
@@ -87,6 +87,14 @@ public class HiddenAliasesControllerTests
     {
         var body = Assert.IsType<HiddenAliasesResponse>(Assert.IsType<OkObjectResult>(Create(["writer"]).GetHiddenAliases()).Value);
         Assert.True(body.WarnUnknownAliases);
+    }
+
+    [Fact]
+    public void Get_PassesTheWarnUnknownAliasesFlag_WhenTurnedOff()
+    {
+        var body = Assert.IsType<HiddenAliasesResponse>(
+            Assert.IsType<OkObjectResult>(Create(["writer"], warnUnknownAliases: false).GetHiddenAliases()).Value);
+        Assert.False(body.WarnUnknownAliases);
     }
 
     [Fact]
