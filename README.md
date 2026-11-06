@@ -104,9 +104,9 @@ If an alias has a typo, or its package is not installed, the browser console sho
 
 ## What to expect
 
-- An extension that is on screen when the backoffice starts can show for a moment, up to about 100 ms, before it is removed. It goes away without a reload.
+- An extension that is on screen when the backoffice starts can show for a moment, up to about 100 ms, before it is removed, and on a slow connection it can show for longer, because exclusion waits for the rules request. It goes away without a reload.
 - If the package cannot load its rules (for example the request fails), nothing is hidden and the console shows `BackofficeTidy: could not load rules; nothing hidden.`
-- Rules are read from configuration each time the backoffice asks, so an edit to a reloaded appsettings file applies to the next backoffice load. Restart the app if your host does not reload configuration.
+- Rules are read from configuration each time the backoffice asks, so an edit to a reloaded appsettings file applies to the next backoffice load. Restart the app if your host does not reload configuration. If an edit makes a rule invalid (for example both `Alias` and `Preset`), the running site does not stop: the request fails, nothing is hidden and the console shows the warning above. A restart with the same invalid rule fails at start-up.
 
 ## Uninstall
 

@@ -19,10 +19,10 @@ export const runId = Date.now().toString(36);
 
 export async function login(page: Page, email: string, password: string) {
   await page.goto('/umbraco');
-  const user = page.locator('input[name="username"], input[type="email"]').first();
+  const user = page.locator('input[name="username"], input[type="email"]').filter({ visible: true });
   await user.waitFor();
   await user.fill(email);
-  await page.locator('input[type="password"]').first().fill(password);
+  await page.locator('input[type="password"]').filter({ visible: true }).fill(password);
   await page.keyboard.press('Enter');
   await page.waitForURL(/\/umbraco\/section\//, { timeout: 60_000 });
   // The backoffice keeps booting (manifests, current user) after the redirect; let it settle before API calls.

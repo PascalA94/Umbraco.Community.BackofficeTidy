@@ -12,7 +12,15 @@ public class ControllerSecurityTests
     private static Assembly PackageAssembly => typeof(BackofficeTidyComposer).Assembly;
 
     private static List<Type> Controllers()
-        => PackageAssembly.GetTypes().Where(t => t.Name.EndsWith("Controller", StringComparison.Ordinal) && !t.IsAbstract).ToList();
+        => PackageAssembly.GetTypes().Where(t => typeof(Microsoft.AspNetCore.Mvc.ControllerBase).IsAssignableFrom(t) && !t.IsAbstract).ToList();
+
+    private static IEnumerable<Type> ChainInPackage(Type type)
+    {
+        for (Type? t = type; t is not null && t.Assembly == PackageAssembly; t = t.BaseType)
+        {
+            yield return t;
+        }
+    }
 
     [Fact]
     public void AllControllers_AreManagementApi_NoAnonymous()
@@ -26,7 +34,13 @@ public class ControllerSecurityTests
             Assert.EndsWith(
                 "/backoffice-tidy",
                 controller.GetCustomAttribute<VersionedApiBackOfficeRouteAttribute>(inherit: true)?.Template);
-            Assert.NotEmpty(controller.GetCustomAttributes<AuthorizeAttribute>(inherit: true));
+            // Core's base class carries its own [Authorize], so inherited attributes would pass even if our base weakened
+            // the policy. Check the ones this package declares itself (the controller and its bases in this assembly).
+            AuthorizeAttribute[] ours = ChainInPackage(controller)
+                .SelectMany(t => t.GetCustomAttributes<AuthorizeAttribute>(inherit: false))
+                .ToArray();
+            Assert.NotEmpty(ours);
+            Assert.All(ours, a => Assert.Equal(Umbraco.Cms.Web.Common.Authorization.AuthorizationPolicies.BackOfficeAccess, a.Policy));
             Assert.Equal("Backoffice Tidy", controller.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ApiExplorerSettingsAttribute>(inherit: true)?.GroupName);
         }
     }
