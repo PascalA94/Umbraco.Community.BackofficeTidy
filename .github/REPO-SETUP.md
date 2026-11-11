@@ -15,7 +15,7 @@ Do these in order, before the first push that runs Actions.
    - **Protected environment `nuget`** (Settings, Environments): you as required reviewer, deployment tags limited to `release/*`. `publish.yml`'s publish job sets `environment: nuget`, and the nuget.org Trusted Publishing policy is bound to that environment name.
 8. **First CI run (its own step):** push, open a PR, then run Release checks by hand. Expect rounds of fixes; do not tag before it is green.
 9. **Presentation, before the first release:**
-   - replace `assets/icon.svg` and re-render `assets/icon.png` at 128x128 (the placeholder ships otherwise);
+   - keep `assets/icon.svg` and `assets/icon.png` (128x128) in step: re-render the PNG whenever the SVG changes;
    - add 2-3 screenshots (see `assets/screenshots/README.md`), list them in `umbraco-marketplace.json` → `Screenshots`, and un-comment the screenshot line in `README.md`;
    - make the NuGet `PackageTags`, the marketplace `Tags` and the GitHub topics describe what the package is.
 10. **Versioning:** the package major follows Umbraco's major. Go stable (`18.0.0`) at the first real public release unless settings, API values, aliases or table names are still likely to change; alphas put people off (NuGet hides them). After stable, no breaking changes until the next Umbraco major, and new features ship as minors. An alpha nobody downloaded can be retired: `gh release delete <tag> --cleanup-tag`, and unlist it on nuget.org (NuGet never deletes).
