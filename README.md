@@ -16,7 +16,7 @@ Hide Umbraco backoffice extensions by alias, per environment and user group, fro
 
 A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (17.8.0 or later) or Umbraco 18 (18.3.0 or later), on .NET 10.
 
-![A writer's backoffice with the Welcome tab and search hidden](https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-02-writer-rules-applied.png)
+![A writer's backoffice before and after: the Welcome tab and search hidden](https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-after.png)
 
 ## Supported versions
 
