@@ -3,6 +3,6 @@
   <rect width="128" height="128" rx="24" fill="#1b264f"/>
   <!-- A tidy list: two items kept, the middle one hidden (dashed ghost). -->
   <rect x="26" y="28" width="76" height="18" rx="9" fill="#ffffff"/>
-  <rect x="28" y="55" width="72" height="18" rx="9" fill="none" stroke="#f5c1bc" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"/>
+  <rect x="29" y="56" width="70" height="16" rx="8" fill="none" stroke="#f5c1bc" stroke-width="5" stroke-dasharray="8.9 6.93" stroke-linecap="round"/>
   <rect x="26" y="82" width="52" height="18" rx="9" fill="#ffffff"/>
 </svg>
