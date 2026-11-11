@@ -34,7 +34,7 @@
   <PropertyGroup>
     <!-- 17.x and 18.x ship from one tag release/<PackageMinor>.<PackagePatch>-<suffix>; the major comes from the line. -->
     <PackageMinor>0</PackageMinor>
-    <PackagePatch>0</PackagePatch>
+    <PackagePatch>1</PackagePatch>
     <PackageVersionSuffix></PackageVersionSuffix>
     <UmbracoRange>[$(UmbracoFloor), $(UmbracoNextMajor))</UmbracoRange>
     <UmbracoTestVersion Condition="'$(UmbracoTestVersion)' == ''">$(UmbracoFloor)</UmbracoTestVersion>
