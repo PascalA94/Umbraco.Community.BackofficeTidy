@@ -17,16 +17,16 @@
   },
   "Screenshots": [
     {
-      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-rules-not-applied.png",
-      "Caption": "The Welcome dashboard tab and the search header app, before any rule applies."
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-after.png",
+      "Caption": "The same writer without and with the rules: the Welcome dashboard tab and the search header app are hidden."
     },
     {
-      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-02-writer-rules-applied.png",
-      "Caption": "A writer with the rules applied: no Welcome tab and no search header app."
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-02-rules-in-appsettings.png",
+      "Caption": "The rules in appsettings.json, and the result for a writer."
     },
     {
-      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-03-editor-search-kept.png",
-      "Caption": "An editor with the same rules: the search header app is kept, because that rule is only for writers."
+      "ImageUrl": "https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-03-writer-vs-editor.png",
+      "Caption": "A writer and an editor with the same rules: the editor keeps the search header app, because that rule is only for writers."
     }
   ],
   "Tags": [
