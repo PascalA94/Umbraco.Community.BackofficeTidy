@@ -1,10 +1,16 @@
-# osv-scanner reads a csproj version range such as [18.3.0, 19.0.0) as a version and can match advisories that
+# osv-scanner reads a csproj version range such as [18.3.0, 19.0.0) or [19.0.0-rc1, 20.0.0) as a version and can match advisories that
 # were fixed long before the floor. osv-scanner does not read the NuGet lock files, so the resolved packages on each
 # line are covered by build/check-vulnerable.sh, which build.yml and publish.yml both run. Pass this file with
 # --config=./osv-scanner.toml (build.yml does).
 #
 # Add an entry only after checking the advisory really does not affect the floor (query OSV for the floor version),
 # and always give the reason. Never ignore an advisory that lists a version at or above the floor as affected.
+# Exception: a dev-only build dependency in the client lockfile (dev: true, never shipped in the nupkg) may be ignored with an ignoreUntil date.
 [[IgnoredVulns]]
 id = "GHSA-6ffg-mjg7-585x"
-reason = "Affects Umbraco.Cms.Api.Management < 14.3.3 and 15.0.0-rc1 to 15.2.3 only; the package floors are 17.8.0 and 18.3.0 (OSV queries for both floors return no vulnerabilities)."
+reason = "Affects Umbraco.Cms.Api.Management < 14.3.3 and 15.0.0-rc1 to 15.2.3 only; the package floors are 17.8.0, 18.3.0 and 19.0.0-rc1 (OSV queries for all three floors return no vulnerabilities)."
+
+[[IgnoredVulns]]
+id = "GHSA-fc5q-39xc-vjpf"
+ignoreUntil = 2026-12-31
+reason = "picomatch 4.0.7 is a dev-only build dependency (Client/package-lock.json dev: true), never shipped in the nupkg; the glob patterns it sees are our own build config; no fixed version yet. Re-check by the ignoreUntil date."

@@ -62,9 +62,9 @@ Hide backoffice extensions by alias from appsettings, scoped per environment and
   - `eng/lines.txt` = `17` and `18`, with the `UmbracoMajor` switch and `packages.$(UmbracoMajor).lock.json`;
   - one `release/*` tag packs `17.x` and `18.x`;
   - four CI legs.
-- **One client bundle serves both lines.** `@umbraco-cms/backoffice` is a Vite external, so the bundle holds only bare imports (`@umbraco-cms/backoffice/extension-api` and similar) that the host's import map resolves at runtime. Every API used is on both tags (section 0).
+- **One client bundle serves all three lines.** `@umbraco-cms/backoffice` is a Vite external, so the bundle holds only bare imports (`@umbraco-cms/backoffice/extension-api` and similar) that the host's import map resolves at runtime. Every API used is on both tags (section 0).
   - The committed `wwwroot/` is built against `^17.8.0`, the lower line.
-  - A CI job also type-checks `Client/src` against `^18.3.0` (`npm i --no-save` in a temp copy, `tsc --noEmit`), so an 18-only break shows on the PR.
+  - A CI job also type-checks `Client/src` against `^18.3.0` (`npm i --no-save` in a temp copy, `tsc --noEmit`), so an 18-only break shows on the PR. A twin job type-checks against `@umbraco-cms/backoffice@19.0.0-rc1`.
   - If a line ever needs different code, split it into two bundles then, not before.
 - A Razor class library on `Umbraco.Cms.Api.Management` at the line's range. Client: TypeScript, Lit and Vite, with `@umbraco-cms/backoffice` as a `devDependency` and a Vite external.
 - Pitfalls:
@@ -162,7 +162,7 @@ src/Umbraco.Community.BackofficeTidy/
   - a preset-table pin test (the exact verified aliases).
 - **API tests:** the controller reflection check (S1: base class, route, no `AllowAnonymous`), and a resolver call through a stubbed `IBackOfficeSecurityAccessor`. A full `Umbraco.Cms.Tests.Integration` API test only if it is cheap on both lines (01 has the pattern).
 - **Client (Vitest):** `entry-point` with a fake registry and fetch: aliases excluded, a fetch failure gives no exclusions and one warning, unknown aliases give one warning each.
-- **Both lines:** the .NET suites with `-p:UmbracoMajor=17` and `18`. The client is built and tested against `^17.8.0` and type-checked against `^18.3.0`.
+- **Both lines:** the .NET suites with `-p:UmbracoMajor=17` and `18`. The client is built and tested against `^17.8.0` and type-checked against `^18.3.0` and `19.0.0-rc1`.
 - **Manual (last plan task), on a 17.8 and an 18.3 demo site:** two user groups with different rules, the Welcome preset, and Copilot if Umbraco.AI installs on that line.
 
 ---

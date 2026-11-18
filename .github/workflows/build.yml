@@ -1,7 +1,7 @@
 name: Build and Test
 
 # Fast PR checks only (about 5 minutes): build and SQLite tests at the floor and at the latest minor, client build and
-# wwwroot drift, gitleaks, osv-scanner and check-vulnerable. Both Umbraco lines (17 and 18) build from this one branch,
+# wwwroot drift, gitleaks, osv-scanner and check-vulnerable. The three Umbraco lines (17, 18 and 19) build from this one branch,
 # selected by -p:UmbracoMajor. Never add e2e or SQL Server here: they live in
 # release-checks.yml, which is run by hand.
 on:
@@ -26,23 +26,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        line: ['17', '18']
+        line: ['17', '18', '19']
         # floor: locked restore at the committed packages.<line>.lock.json (UmbracoTestVersion / UmbracoDemoVersion defaults).
         # latest: newest <line>.x, restored unlocked; the lock files it rewrites are never committed.
         leg: [floor, latest]
     # MSBuild reads environment variables as properties: UmbracoMajor picks the line, and the latest leg floats the test and
-    # demo Umbraco versions. Empty values fall through to Directory.Build.props defaults (the floor).
+    # demo Umbraco versions (19.*-* on 19, which has no stable yet; remove that special case at 19 stable). Empty values fall through to Directory.Build.props defaults (the floor).
     env:
       UmbracoMajor: ${{ matrix.line }}
-      UmbracoTestVersion: ${{ matrix.leg == 'latest' && format('{0}.*', matrix.line) || '' }}
-      UmbracoDemoVersion: ${{ matrix.leg == 'latest' && format('{0}.*', matrix.line) || '' }}
+      UmbracoTestVersion: ${{ matrix.leg == 'latest' && (matrix.line == '19' && '19.*-*' || format('{0}.*', matrix.line)) || '' }}
+      UmbracoDemoVersion: ${{ matrix.leg == 'latest' && (matrix.line == '19' && '19.*-*' || format('{0}.*', matrix.line)) || '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup .NET
         uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
-          dotnet-version: '10.x'
+          dotnet-version: ${{ matrix.line == '19' && '11.x' || '10.x' }}
           # NuGet cache keyed on the lock files. Not used in publish.yml, so a release never restores from a PR-filled cache.
           cache: true
           cache-dependency-path: '**/packages.*.lock.json'
@@ -117,8 +117,8 @@ jobs:
             grep -rqE --include='*.js' "[\"']@umbraco-cms/backoffice/" src/Umbraco.Community.BackofficeTidy/wwwroot/
           fi
 
-      # One bundle serves both lines (built against ^17.8.0). Type-check the source against the 18 line too, in a
-      # temp copy, so an 18-only break shows on the PR.
+      # One bundle serves all three lines (built against ^17.8.0). Type-check the source against the 18 and 19 lines
+      # too, in a temp copy, so an 18-only or 19-only break shows on the PR.
       - name: Type-check against @umbraco-cms/backoffice 18
         run: |
           tmp="$(mktemp -d)"
@@ -127,6 +127,16 @@ jobs:
           rm -rf node_modules
           npm ci --ignore-scripts
           npm i --no-save --ignore-scripts "@umbraco-cms/backoffice@^18.3.0"
+          npx tsc --noEmit
+
+      - name: Type-check against @umbraco-cms/backoffice 19
+        run: |
+          tmp="$(mktemp -d)"
+          cp -R "$CLIENT_DIR/." "$tmp/"
+          cd "$tmp"
+          rm -rf node_modules
+          npm ci --ignore-scripts
+          npm i --no-save --ignore-scripts "@umbraco-cms/backoffice@19.0.0-rc1"
           npx tsc --noEmit
 
   secrets:
@@ -162,13 +172,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        line: ['17', '18']
+        line: ['17', '18', '19']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup .NET
         uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
-          dotnet-version: '10.x'
+          dotnet-version: ${{ matrix.line == '19' && '11.x' || '10.x' }}
           # NuGet cache keyed on the lock files. Not used in publish.yml, so a release never restores from a PR-filled cache.
           cache: true
           cache-dependency-path: '**/packages.*.lock.json'
