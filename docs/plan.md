@@ -6,7 +6,7 @@
 
 **Architecture:** A Razor class library. A pure `HiddenAliasResolver` turns the configured rules, the environment and the caller's group aliases into a list of aliases. One Management API GET returns that list for the current user. One `backofficeEntryPoint` fetches it and calls `extensionRegistry.exclude(alias)` for each. One client bundle (backoffice imports are externals) serves both lines.
 
-**Tech Stack:** .NET 10, `Umbraco.Cms.Api.Management` `[17.8.0, 18.0.0)` and `[18.3.0, 19.0.0)`, TypeScript, Lit, Vite, `@umbraco-cms/backoffice` `^17.8.0` (type-checked against `^18.3.0`), `@hey-api/openapi-ts`, Vitest, xUnit, NSubstitute, GitHub Actions, gitleaks, osv-scanner, CodeQL.
+**Tech Stack:** .NET 10, `Umbraco.Cms.Api.Management` `[17.8.0, 18.0.0)` and `[18.3.0, 19.0.0)`, TypeScript, Lit, Vite, `@umbraco-cms/backoffice` `^17.8.0` (type-checked against `^18.3.0` and `19.0.0-rc1`), `@hey-api/openapi-ts`, Vitest, xUnit, NSubstitute, GitHub Actions, gitleaks, osv-scanner, CodeQL.
 
 **Spec:** `docs/design.md`. Portfolio rules and the CI and GitHub rules live in Pascal's private package workspace and win over this plan's CI tasks. Client and OpenAPI patterns follow `Umbraco.Community.ArchivedUsers` (read only).
 
@@ -31,7 +31,7 @@
 - **Hiding is not access control.** The README says so first (spec 5).
 - **CI** (README rules):
   - a four-leg .NET matrix (lines 17 and 18 × floor and latest);
-  - a `client` job (build, Vitest, drift check, XSS grep, `tsc --noEmit` against `@umbraco-cms/backoffice@^18.3.0`);
+  - a `client` job (build, Vitest, drift check, XSS grep, `tsc --noEmit` against `@umbraco-cms/backoffice@^18.3.0` and `19.0.0-rc1`);
   - gitleaks per PR commit, osv-scanner with `osv-scanner.toml`, check-vulnerable;
   - `release-checks.yml` is `workflow_dispatch` only; no NuGet cache in `publish.yml`; Dependabot `open-pull-requests-limit: 0`; SHA-pinned actions.
 - **CI and GitHub rules (Pascal, 2026-11-04):** the portfolio README.md section "Build approach → CI and GitHub rules" overrides this plan's CI and GitHub tasks: public repo before the first CI push, fast PR checks only, e2e and SQL Server in a manual release-checks.yml, no credentials in workflows (random per-run passwords), e2e locators scoped to visible elements, and the first GitHub CI run planned as its own step before any release tag.

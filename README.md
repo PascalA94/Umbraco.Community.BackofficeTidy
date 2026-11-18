@@ -14,7 +14,7 @@ Hide Umbraco backoffice extensions by alias, per environment and user group, fro
 [![NuGet downloads](https://img.shields.io/nuget/dt/Umbraco.Community.BackofficeTidy)](https://www.nuget.org/packages/Umbraco.Community.BackofficeTidy)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](https://github.com/PascalA94/Umbraco.Community.BackofficeTidy/blob/main/LICENSE)
 
-A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (17.8.0 or later) or Umbraco 18 (18.3.0 or later), on .NET 10.
+A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (17.8.0 or later) or Umbraco 18 (18.3.0 or later), on .NET 10, or Umbraco 19 (19.0.0-rc1 or later), on .NET 11. Umbraco 19 is a release candidate line. Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable.
 
 ![A writer's backoffice before and after: the Welcome tab and search hidden](https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-after.png)
 
@@ -24,6 +24,7 @@ A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (1
 |---|---|
 | 17.x | Umbraco 17 (17.8.0 or later, below 18) |
 | 18.x | Umbraco 18 (18.3.0 or later, below 19) |
+| 19.x (release candidate) | Umbraco 19 (19.0.0-rc1 or later, below 20), .NET 11. Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable. |
 
 Install the package whose major version matches your Umbraco major version.
 

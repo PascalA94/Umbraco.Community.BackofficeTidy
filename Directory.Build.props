@@ -1,17 +1,18 @@
 <Project>
   <!--
-    One codebase, two Umbraco lines. UmbracoMajor selects the line: 18 (default) or 17.
+    One codebase, three Umbraco lines. UmbracoMajor selects the line: 18 (default), 17 or 19.
       dotnet build -p:UmbracoMajor=17
-    It sets the CMS range, the package version, the UMBRACO_17 / UMBRACO_18 constants, and a separate lock file and
+    It sets the CMS range, the package version, the UMBRACO_17 / UMBRACO_18 / UMBRACO_19 constants, the target framework
+    (19 is net11.0, 17 and 18 are net10.0, via LineTfm), and a separate lock file and
     obj folder per line, so switching lines never reuses the other line's restore.
 
     Lock files describe the floor: they are generated and committed at the default values of UmbracoTestVersion and
     UmbracoDemoVersion (the line's floor), and the floor CI legs restore in locked mode. The latest-minor CI legs override
-    these two properties (17.* or 18.*) and restore unlocked (force-evaluate, RestoreLockedMode=false); the lock files
-    they rewrite are never committed. Nothing else overrides these properties.
+    these two properties (17.*, 18.* or, for 19, 19.*-*) and restore unlocked (force-evaluate, RestoreLockedMode=false);
+    the lock files they rewrite are never committed. Nothing else overrides these properties.
 
-    Floors never go below 17.8.0 / 18.3.0: they sit above the 27 Oct 2026 advisories. Lowering one needs a security
-    review first.
+    Floors never go below 17.8.0 / 18.3.0 / 19.0.0-rc1: 17.8.0 and 18.3.0 sit above the 27 Oct 2026 advisories. Lowering
+    one needs a security review first.
   -->
   <PropertyGroup>
     <UmbracoMajor Condition="'$(UmbracoMajor)' == ''">18</UmbracoMajor>
@@ -27,8 +28,17 @@
     <UmbracoNextMajor>19.0.0</UmbracoNextMajor>
     <DefineConstants>$(DefineConstants);UMBRACO_18</DefineConstants>
   </PropertyGroup>
-  <Target Name="ValidateUmbracoMajor" BeforeTargets="Restore;Build;CoreCompile" Condition="'$(UmbracoMajor)' != '17' and '$(UmbracoMajor)' != '18'">
-    <Error Text="UmbracoMajor must be 17 or 18 (got '$(UmbracoMajor)')." />
+  <PropertyGroup Condition="'$(UmbracoMajor)' == '19'">
+    <UmbracoFloor>19.0.0-rc1</UmbracoFloor>
+    <UmbracoNextMajor>20.0.0</UmbracoNextMajor>
+    <DefineConstants>$(DefineConstants);UMBRACO_19</DefineConstants>
+    <LineTfm>net11.0</LineTfm>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(UmbracoMajor)' != '19'">
+    <LineTfm>net10.0</LineTfm>
+  </PropertyGroup>
+  <Target Name="ValidateUmbracoMajor" BeforeTargets="Restore;Build;CoreCompile" Condition="'$(UmbracoMajor)' != '17' and '$(UmbracoMajor)' != '18' and '$(UmbracoMajor)' != '19'">
+    <Error Text="UmbracoMajor must be 17, 18 or 19 (got '$(UmbracoMajor)')." />
   </Target>
 
   <PropertyGroup>

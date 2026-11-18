@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      lines: ${{ steps.tag.outputs.lines }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -27,6 +29,24 @@ jobs:
 
       - name: Version files match the tag
         run: bash build/check-release-version.sh "$GITHUB_REF_NAME"
+
+      # A legacy tag (release/<minor>.<patch>) packs 17 and 18; a release/19.<minor>.<patch> tag packs 19 only.
+      # The tag reaches the script through an env var, never inline.
+      - name: Lines for this tag
+        id: tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          sfx='(-[0-9A-Za-z][0-9A-Za-z.-]*)?'
+          if [[ "$TAG" =~ ^release/19\.[0-9]+\.[0-9]+${sfx}$ ]]; then
+            lines="19"; pack_version="${TAG#release/}"
+          elif [[ "$TAG" =~ ^release/[0-9]+\.[0-9]+${sfx}$ ]]; then
+            lines="$(grep -E '^[0-9]+$' eng/lines.txt | grep -vx 19 | tr '\n' ' ')"; pack_version=""
+          else
+            echo "Unexpected tag $TAG" >&2; exit 1
+          fi
+          { echo "lines=$lines"; echo "pack_version=$pack_version"; echo "expected=$(wc -w <<<"$lines" | tr -d ' ')"; } >> "$GITHUB_OUTPUT"
 
       - name: Setup Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -49,32 +69,41 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
-          dotnet-version: '10.x'
+          dotnet-version: ${{ steps.tag.outputs.lines == '19' && '11.x' || '10.x' }}
 
-      # Both lines are restored (locked), built, tested and checked for known advisories before anything is packed.
-      - name: Build, test and audit both lines
+      # Each line this tag packs is restored (locked), built, tested and checked for known advisories before anything is packed.
+      - name: Build, test and audit the lines
+        env:
+          LINES: ${{ steps.tag.outputs.lines }}
         run: |
-          while read -r line; do
-            [ -n "$line" ] || continue
+          for line in $LINES; do
             echo "== Umbraco $line"
             dotnet restore src/Umbraco.Community.BackofficeTidy.slnx "-p:UmbracoMajor=$line" --locked-mode
             dotnet build src/Umbraco.Community.BackofficeTidy.slnx --no-restore -c Release "-p:UmbracoMajor=$line"
             dotnet test src/Umbraco.Community.BackofficeTidy.slnx --no-build -c Release "-p:UmbracoMajor=$line"
             UmbracoMajor="$line" bash build/check-vulnerable.sh
-          done < eng/lines.txt
+          done
 
-      # One nupkg per line (17.x and 18.x), each carrying wwwroot. Only the package is packed: tests and the demo site
+      # One nupkg per line packed, each carrying wwwroot. Only the package is packed: tests and the demo site
       # are IsPackable=false. pack.sh stamps the line's version into the manifest and restores it afterwards.
       - name: Pack
+        env:
+          LINES: ${{ steps.tag.outputs.lines }}
+          PACK_VERSION: ${{ steps.tag.outputs.pack_version }}
         run: bash build/pack.sh ./artifacts
 
       - name: Packages contain the client bundle
+        env:
+          EXPECTED: ${{ steps.tag.outputs.expected }}
         run: |
           shopt -s nullglob
           packs=(./artifacts/*.nupkg)
-          [ "${#packs[@]}" -eq 2 ] || { echo "expected 2 nupkgs, found ${#packs[@]}" >&2; exit 1; }
+          [ "${#packs[@]}" -eq "$EXPECTED" ] || { echo "expected $EXPECTED nupkgs, found ${#packs[@]}" >&2; exit 1; }
           for f in "${packs[@]}"; do
             unzip -l "$f" | grep -q 'staticwebassets/index.js' || { echo "$f has no staticwebassets/index.js" >&2; exit 1; }
+            # Per-line NuGet lock files must not ship in the package.
+            listing="$(unzip -Z1 "$f")"
+            case "$listing" in *lock.json*) echo "$f contains a lock file" >&2; exit 1;; esac
           done
 
       - name: Upload packages
@@ -105,7 +134,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
-          dotnet-version: '10.x'
+          dotnet-version: ${{ needs.build.outputs.lines == '19' && '11.x' || '10.x' }}
 
       # Needs the repository secret NUGET_USER (the nuget.org profile name, not a key) and a Trusted Publishing
       # policy on nuget.org for this repository and workflow file (see .github/REPO-SETUP.md).
@@ -121,5 +150,6 @@ jobs:
         run: |
           dotnet nuget push ./artifacts/*.nupkg \
             --source https://api.nuget.org/v3/index.json \
-            --api-key "$NUGET_API_KEY"
+            --api-key "$NUGET_API_KEY" \
+            --skip-duplicate
 

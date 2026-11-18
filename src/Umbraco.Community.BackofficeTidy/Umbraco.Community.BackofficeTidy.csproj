@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(LineTfm)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Umbraco.Community.BackofficeTidy</RootNamespace>
@@ -19,6 +19,7 @@
     <VersionSuffix>$(PackageVersionSuffix)</VersionSuffix>
     <Authors>Pascal Meyer</Authors>
     <Description>Hide Umbraco backoffice extensions by alias, per environment and user group, from appsettings.</Description>
+    <Description Condition="'$(UmbracoMajor)' == '19'">$(Description) Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable.</Description>
     <Copyright>Copyright © Pascal Meyer</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -27,6 +28,8 @@
     <RepositoryUrl>https://github.com/PascalA94/Umbraco.Community.BackofficeTidy</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>umbraco;umbraco-marketplace;umbracopackage;backoffice;dashboard;copilot;ai;user-groups;tidy</PackageTags>
+    <!-- No Marketplace tag on release candidates: the Marketplace does not list prerelease-only community packages. Remove at 19 stable. -->
+    <PackageTags Condition="'$(UmbracoMajor)' == '19'">$(PackageTags.Replace('umbraco-marketplace;',''))</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -58,6 +61,8 @@
     <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" />
     <!-- The client source is not package content; only the built wwwroot assets ship -->
     <Content Remove="Client\**" />
+    <!-- Per-line NuGet lock files are build state, not package content (the Razor SDK would otherwise pack them). -->
+    <Content Remove="packages.*.lock.json" />
     <None Include="Client\**" Pack="false" />
   </ItemGroup>
 
