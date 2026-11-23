@@ -14,7 +14,7 @@ Hide Umbraco backoffice extensions by alias, per environment and user group, fro
 [![NuGet downloads](https://img.shields.io/nuget/dt/Umbraco.Community.BackofficeTidy)](https://www.nuget.org/packages/Umbraco.Community.BackofficeTidy)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](https://github.com/PascalA94/Umbraco.Community.BackofficeTidy/blob/main/LICENSE)
 
-A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (17.8.0 or later) or Umbraco 18 (18.3.0 or later), on .NET 10, or Umbraco 19 (19.0.0-rc1 or later), on .NET 11. Umbraco 19 is a release candidate line. Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable.
+A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (17.8.2 or later) or Umbraco 18 (18.3.2 or later), on .NET 10, or Umbraco 19 (19.0.0-rc1 or later), on .NET 11. Umbraco 19 is a release candidate line. Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable.
 
 ![A writer's backoffice before and after: the Welcome tab and search hidden](https://raw.githubusercontent.com/PascalA94/Umbraco.Community.BackofficeTidy/main/assets/screenshots/screenshot-01-before-after.png)
 
@@ -22,11 +22,15 @@ A community package, not made or supported by Umbraco HQ. Requires Umbraco 17 (1
 
 | Package version | Umbraco |
 |---|---|
-| 17.x | Umbraco 17 (17.8.0 or later, below 18) |
-| 18.x | Umbraco 18 (18.3.0 or later, below 19) |
+| 17.x | Umbraco 17 (17.8.2 or later, below 18) |
+| 18.x | Umbraco 18 (18.3.2 or later, below 19) |
 | 19.x (release candidate) | Umbraco 19 (19.0.0-rc1 or later, below 20), .NET 11. Built against Umbraco 19.0.0-rc1, not yet verified on 19 stable. |
 
 Install the package whose major version matches your Umbraco major version.
+
+From 17.0.2 and 18.0.2 the upper bound is `-alpha` (`[17.8.2, 18.0.0-alpha)`, `[18.3.2, 19.0.0-alpha)`), which also excludes the next major's prereleases. Installing 18.x on an Umbraco 19 release-candidate site gives a NuGet warning (NU1608) instead of a silent install; earlier versions said nothing.
+
+From 17.0.2 and 18.0.2 the floors are 17.8.2 and 18.3.2, which fix [GHSA-348f-9mg8-rhv4](https://github.com/umbraco/Umbraco-CMS/security/advisories/GHSA-348f-9mg8-rhv4) (sensitive member property values in the Examine members index). 17.0.1 and 18.0.1 accept 17.8.0 and 18.3.0. For 19, the floor is 19.0.0-rc1 until 19.0.0 ships.
 
 ## Install
 

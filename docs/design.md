@@ -5,7 +5,7 @@
 | Package | `Umbraco.Community.BackofficeTidy` |
 | Owner | Pascal Meyer (`PascalA94`) |
 | Size | S, about 4-7 h agent time (3-5 h plus 1-2 h for the second line) |
-| Lines | **Both from the start** (Pascal, 2026-11-04: client sites are on v17 LTS): `17.x` on CMS `[17.8.0, 18.0.0)` and `18.x` on `[18.3.0, 19.0.0)`, one codebase, both packed from one commit |
+| Lines | **Both from the start** (Pascal, 2026-11-04: client sites are on v17 LTS): `17.x` on CMS `[17.8.2, 18.0.0-alpha)` and `18.x` on `[18.3.2, 19.0.0-alpha)`, one codebase, both packed from one commit |
 | Status | Draft design, 2026-11-04. Nothing built |
 | Inputs | the package scope, the portfolio notes, the Umbraco pitfalls reference and a sibling package (house style for the backoffice client and Management API) |
 
